@@ -1,0 +1,63 @@
+# Ver base de datos
+View(Encuesta_Nacional_UDP_2015)
+# Variable numérica
+Encuesta_Nacional_UDP_2015[sapply(Encuesta_Nacional_UDP_2015, is.numeric)] <- lapply(Encuesta_Nacional_UDP_2015[sapply(Encuesta_Nacional_UDP_2015, is.numeric)], as.factor)
+# Instalar Paquetes (library)
+library(tidyverse)
+library(dplyr)
+library(plyr)
+library(tidyr)
+library(mlogit)
+library(stargazer)
+library(sjPlot)
+library(rsq)
+# Creacion variables dicotomicas
+# 1. Variable Dependiente
+Encuesta_Nacional_UDP_2015$P1B1 = revalue(Encuesta_Nacional_UDP_2015$P1, c("1"="1", "2"="1", "3"="0", "4"="0", "5"="0", "8"="0", "9"="0"))
+table(Encuesta_Nacional_UDP_2015$P1B1)
+# 2. Variables Independientes
+# 2.1 Pregunta 12 
+Encuesta_Nacional_UDP_2015$P12R = revalue(Encuesta_Nacional_UDP_2015$P12, c("1"="1", "2"="0", "3"="0", "8"="0", "9"="0"))
+table(Encuesta_Nacional_UDP_2015$P12R)
+# 2.2 Pregunta 5
+Encuesta_Nacional_UDP_2015$P5R = revalue(Encuesta_Nacional_UDP_2015$P5, c("1"="1", "2"="1", "3"="0", "4"="0", "5"="0", "8"="0", "9"="0"))
+table(Encuesta_Nacional_UDP_2015$P5R)
+# 2.3 Pregunta 13
+Encuesta_Nacional_UDP_2015$P13R = revalue(Encuesta_Nacional_UDP_2015$P13, c("1"="1", "2"="1", "3"="0", "4"="0", "8"="0", "9"="0"))
+table(Encuesta_Nacional_UDP_2015$P13R)
+# 3. Variable de control: Sexo Entrevistado
+table(Encuesta_Nacional_UDP_2015$Sexo_Entrevistado)
+# 4. Correr Regresion Logistica Binaria 
+m1 = glm(P1B1 ~ P12R + P5R + P13R, data = Encuesta_Nacional_UDP_2015, family = binomial())
+View(m1)
+summary(m1)
+# 5. Tabular Regresion Logistica Binaria
+stargazer(m1, title = "Modelo 1", align =TRUE, out = "resultado1.txt")
+# 5.1 Sitio web convertir .txt a word (.doc)
+# https://convertio.co/es/txt-doc/
+# 6. Calcular bondad de ajuste
+rsq(m1)
+# 7. Probamos un segundo modelo con una nueva variable
+# Pregunta 26M 
+table(Encuesta_Nacional_UDP_2015$P26M)
+Encuesta_Nacional_UDP_2015$P26MR = revalue(Encuesta_Nacional_UDP_2015$P26M, c("1"="1", "2"="1", "3"="0", "4"="0", "8"="0", "9"="0"))
+table(Encuesta_Nacional_UDP_2015$P26MR)
+# 8. Corremos segundo modelo Regresion Logistica Binaria 
+m2 = glm(P1B1 ~ P12R + P5R + P13R + P26MR, data = Encuesta_Nacional_UDP_2015, family = binomial())
+summary(m2)
+# 9. Calcular bondad de ajuste
+rsq(m2)
+# 10. Tabular Regresion Logistica Binaria
+stargazer(m1, m2, title = "Resultados", align =TRUE, out = "resultados2.txt")
+# 11. Probamos un tercer modelo con una nueva variable
+# Pregunta 31
+table(Encuesta_Nacional_UDP_2015$P31)
+Encuesta_Nacional_UDP_2015$P31R = revalue(Encuesta_Nacional_UDP_2015$P31, c("1"="1", "2"="1", "3"="1", "4"="1", "5"="0", "6"="0", "7" = "0", "8" = "0", "9" = "0", "10" = "0", "77" = "0", "88" = "0", "99" = "0"))
+table(Encuesta_Nacional_UDP_2015$P31R)
+# 12. Corremos 3 modelo Regresion Logistica Binaria 
+m3 = glm(P1B1 ~ P12R + P5R + P13R + P26MR + P31R, data = Encuesta_Nacional_UDP_2015, family = binomial())
+summary(m3)
+# 14. Calcular bondad de ajuste
+rsq(m3)
+# 15. Tabular Regresion Logistica Binaria
+stargazer(m1, m2, m3, title = "Resultados", align =TRUE, out = "resultados3.txt")
