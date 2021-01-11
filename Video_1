@@ -1,8 +1,8 @@
-# Ver base de datos
 # Descargar base desde: http://encuesta.udp.cl/banco-de-datos/
+# Ver base de datos
 View(Encuesta_Nac_UDP_2015)
-Encuesta_Nac_UDP_2015[sapply(Encuesta_Nac_UDP_2015, is.numeric)] 
-# Instalar Paquetes 
+Encuesta_Nacional_UDP_2015[sapply(Encuesta_Nacional_UDP_2015, is.numeric)] <- lapply(Encuesta_Nacional_UDP_2015[sapply(Encuesta_Nacional_UDP_2015, is.numeric)], as.factor)
+# Instalar o cargar desde la biblioteca estos Paquetes 
 library(tidyverse)
 library(dplyr)
 library(plyr)
@@ -31,6 +31,24 @@ table_3 <- table(Encuesta_Nac_UDP_2015$P5)
 prop.table(table_3)
 # Variable independiente 3: P13 
 table(Encuesta_Nac_UDP_2015$P13)
+table_4 <- table(Encuesta_Nac_UDP_2015$P13)
+# También como porcentaje
+prop.table(table_4)
+# Variable de control: Sexo Entrevistado
+table(Encuesta_Nac_UDP_2015$Sexo_Entrevistado)
+table_5 <- table(Encuesta_Nac_UDP_2015$Sexo_Entrevistado)
+# También como porcentaje
+prop.table(table_5)
+
+# 1.2 Cruce de tablas y correlaciones
+# Ejemplo: Cruce entre P1 y P12
+sjt.xtab(Encuesta_Nac_UDP_2015$P1, #filas
+         Encuesta_Nac_UDP_2015$P12, #columnas
+         file = "Tabla1.doc")
+# 1.3. Test de Correlación. Ejemplo
+cor.test(Encuesta_Nac_UDP_2015$P1, Encuesta_Nac_UDP_2015$P12)
+
+sjt.xtab(Encuesta_Nac_UDP_2015$P1, Encuesta_Nac_UDP_2015$P12, file = "Tabla2.doc")
 table_4 <- table(Encuesta_Nac_UDP_2015$P13)
 # También como porcentaje
 prop.table(table_4)
